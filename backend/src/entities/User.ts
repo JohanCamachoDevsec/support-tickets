@@ -22,15 +22,15 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   @IsNotEmpty({ message: "El nombre es obligatorio" })
   name!: string;
 
-  @Column({ unique: true })
+  @Column({ type: "varchar", unique: true })
   @IsEmail({}, { message: "El email debe ser válido" })
   email!: string;
 
-  @Column({ select: false }) // La contraseña no se incluye en consultas por defecto
+  @Column({ type: "varchar", select: false }) // La contraseña no se incluye en consultas por defecto
   @IsNotEmpty({ message: "La contraseña es obligatoria" })
   @MinLength(8, { message: "La contraseña debe tener al menos 8 caracteres" })
   password!: string;

@@ -16,7 +16,7 @@ export class TicketComment {
   @IsNotEmpty({ message: "El contenido del comentario no puede estar vacío" })
   content!: string;
 
-  @Column({ default: false })
+  @Column({ type: "boolean", default: false })
   @IsBoolean({ message: "El campo isInternal debe ser booleano" })
   isInternal!: boolean;
 

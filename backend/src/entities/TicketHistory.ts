@@ -11,13 +11,13 @@ export class TicketHistory {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   field!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", nullable: true })
   oldValue!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: "varchar", nullable: true })
   newValue!: string;
 
   @ManyToOne(() => User, (user) => user.historyActions)

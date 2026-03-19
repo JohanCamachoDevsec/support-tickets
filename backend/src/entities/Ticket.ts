@@ -32,7 +32,7 @@ export class Ticket {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar" })
   @IsNotEmpty({ message: "El título es obligatorio" })
   title!: string;
 
