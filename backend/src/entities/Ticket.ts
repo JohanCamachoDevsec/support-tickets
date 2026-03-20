@@ -10,8 +10,8 @@ import { TicketHistory } from "./TicketHistory.js";
 export enum TicketStatus {
   OPEN = "OPEN",
   IN_PROGRESS = "IN_PROGRESS",
-  RESOLVED = "RESOLVED",
-  CLOSED = "CLOSED"
+  CLOSED = "CLOSED",
+  REOPENED = "REOPENED"
 }
 
 /**
@@ -73,5 +73,10 @@ export class Ticket {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  /**
+   * Propiedad para pasar el usuario que realiza el cambio al TicketSubscriber.
+   */
+  updatedBy?: User;
 
 }

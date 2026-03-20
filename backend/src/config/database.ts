@@ -3,6 +3,7 @@ import { User } from "../entities/User.js";
 import { Ticket } from "../entities/Ticket.js";
 import { TicketComment } from "../entities/TicketComment.js";
 import { TicketHistory } from "../entities/TicketHistory.js";
+import { TicketSubscriber } from "../subscribers/TicketSubscriber.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -16,5 +17,6 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: true,
-  entities: [User, Ticket, TicketComment, TicketHistory]
+  entities: [User, Ticket, TicketComment, TicketHistory],
+  subscribers: [TicketSubscriber]
 });
