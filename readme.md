@@ -35,10 +35,28 @@ El sistema está diseñado para soportar tres niveles de acceso principales:
 - **ADMIN:** Supervisión total del sistema.
 - **AGENT:** Gestión activa y resolución de tickets.
 - **CLIENT:** Usuario final con capacidad de reportar incidentes.
-
----
+### responsabilidades
+#### **CLIENT**
+*   **Registro/Login:** Puede registrarse de forma pública en la plataforma.
+*   **Creación:** Puede abrir nuevos tickets detallando el problema.
+*   **Visualización:** Solo tiene acceso a los tickets que él mismo creó .
+*   **Acción:** Puede agregar comentarios a sus tickets y reabrirlos si considera que la solución no fue satisfactoria (siguiendo el flujo `CLOSED` -> `REOPENED`).
+#### **AGENT**
+*   **Login:** Acceso mediante credenciales (creadas por un Admin).
+*   **Visualización:** Puede ver todos los tickets pendientes o solo los que tiene asignados.
+*   **Gestión de Ciclo de Vida:** Es el encargado de mover el ticket de `OPEN` a `IN_PROGRESS` y finalmente a `CLOSED`.
+*   **Comunicación:** Puede responder a cualquier ticket bajo su cargo para solicitar más información al cliente.
+#### **ADMIN**
+*   **Gestión de Usuarios:** Es el único con poder para crear cuentas de tipo `AGENT` y manipular usuarios.
+*   **Asignación:** Puede asignar manualmente un ticket a un agente específico.
+*   **Control Total:** Puede cambiar la prioridad de cualquier ticket, editar metadatos o eliminar registros.
+## alcance
+Diseñé el sistema para una sola organización o herramienta interna
+para asegurar la calidad y robuztes del proyecto,
+pero la arquitectura está preparada para escalar
+añadiendo una entidad Organization y un discriminador en las consultas
 ## Estados de los tickets
-abierto
+Abierto
 en proceso
 cerrado
 reabierto
