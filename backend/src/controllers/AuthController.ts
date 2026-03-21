@@ -12,7 +12,8 @@ export const register = async (req: Request, res: Response) => {
     try {
         // Validación con Zod
         const validatedData = registerSchema.parse(req.body);
-        const result = await authService.register({validatedData, role: UserRole.CLIENT});
+        // Forzamos que el registro público sea siempre CLIENT por seguridad
+        const result = await authService.register({ ...validatedData, role: UserRole.CLIENT });
         res.status(201).json(result);
     } catch (error: any) {
         if (error.errors) {
