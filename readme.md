@@ -1,28 +1,47 @@
 # Soporte de Tickets - Prueba Técnica Maja Sportswear 🎫
 
-Este repositorio contiene mi solución a la prueba técnica.
-El objetivo es implementar un sistema de gestión de tickets de soporte que
-permita evaluar el análisis, manejo de datos (CRUD)
-y la gestión de flujos de trabajo con cambios
-de estado y auditoría.
+Este repositorio contiene la solución a la prueba técnica para el sistema de gestión de tickets de soporte. El objetivo es proporcionar una plataforma robusta que permita el manejo del ciclo de vida de incidencias, auditoría automática y control de acceso basado en roles (RBAC).
 
-## stack elegido
+## Stack Tecnológico
 
-- **Backend:** Node.js, Express, TypeScript y TypeORM.
+- **Backend:** Node.js, Express (v5.x), TypeScript, TypeORM.
 - **Frontend:** React con TypeScript.
 - **Base de Datos:** PostgreSQL 17.
-- **Infraestructura:** Docker.
+- **Seguridad/Validación:** JWT, BcryptJS, Zod, class-validator.
+- **Infraestructura:** Docker y Docker Compose.
 
-##  Estructura del Proyecto
+## Estructura del Proyecto
 
-El proyecto sigue una estructura limpia y modular para facilitar el mantenimiento:
+El proyecto se divide en dos directorios principales para separar la lógica del servidor y la interfaz de usuario:
 
-## Características Técnicas
+### Backend (`/backend`)
+- `src/entities`: Modelos de TypeORM (Ticket, User, TicketComment, TicketHistory).
+- `src/services`: Lógica de negocio y reglas de validación de flujo (Máquina de Estados).
+- `src/controllers`: Manejadores de peticiones HTTP.
+- `src/middlewares`: Capas de seguridad (AuthMiddleware) y procesamiento.
+- `src/routes`: Definición de endpoints de la API.
+- `src/validations`: Esquemas de validación de entrada con Zod/class-validator.
+- `src/subscribers`: Listeners de eventos para auditoría automática de cambios.
+- `src/config`: Configuración de base de datos y entorno.
 
-### Tipado Estructural y Seguridad
-Se evita el uso de `any` en toda la base de código. Cada entidad y transferencia de datos está estrictamente tipada, utilizando interfaces y clases de TypeScript para garantizar la robustez del sistema desde la fase de desarrollo.
+### Frontend (`/frontend`)
+- Estructura estándar de React con TypeScript para la interfaz de gestión.
 
-##  Instalación y Despliegue
+## Máquina de Estados (Ciclo de Vida)
+
+El sistema implementa un grafo de estados determinista para garantizar la integridad del flujo de trabajo:
+
+1. **OPEN**: Estado inicial al crear un ticket. Transición permitida a: `IN_PROGRESS`.
+2. **IN_PROGRESS**: El personal de soporte está trabajando. Transición permitida a: `CLOSED`.
+3. **CLOSED**: El problema ha sido resuelto. Transición permitida a: `REOPENED`.
+4. **REOPENED**: El cliente solicita reabrir el caso. Transición permitida a: `IN_PROGRESS` o `CLOSED`.
+
+### Seguridad y Roles (RBAC)
+- **CLIENT**: Puede crear tickets, comentarlos y reabrirlos (si están cerrados). Solo ve sus propios tickets.
+- **AGENT**: Puede gestionar tickets asignados, cambiar estados y añadir comentarios internos.
+- **ADMIN**: Control total del sistema, gestión de usuarios, asignación de tickets y edición de prioridades.
+
+## Instalación y Despliegue
 
 ### Requisitos Previos
 - Docker y Docker Compose instalados.
@@ -30,34 +49,15 @@ Se evita el uso de `any` en toda la base de código. Cada entidad y transferenci
 
 ### Pasos para levantar el entorno:
 
-##  Roles y Flujos de Trabajo
-El sistema está diseñado para soportar tres niveles de acceso principales:
-- **ADMIN:** Supervisión total del sistema.
-- **AGENT:** Gestión activa y resolución de tickets.
-- **CLIENT:** Usuario final con capacidad de reportar incidentes.
-### responsabilidades
-#### **CLIENT**
-*   **Registro/Login:** Puede registrarse de forma pública en la plataforma.
-*   **Creación:** Puede abrir nuevos tickets detallando el problema.
-*   **Visualización:** Solo tiene acceso a los tickets que él mismo creó .
-*   **Acción:** Puede agregar comentarios a sus tickets y reabrirlos si considera que la solución no fue satisfactoria (siguiendo el flujo `CLOSED` -> `REOPENED`).
-#### **AGENT**
-*   **Login:** Acceso mediante credenciales (creadas por un Admin).
-*   **Visualización:** Puede ver todos los tickets pendientes o solo los que tiene asignados.
-*   **Gestión de Ciclo de Vida:** Es el encargado de mover el ticket de `OPEN` a `IN_PROGRESS` y finalmente a `CLOSED`.
-*   **Comunicación:** Puede responder a cualquier ticket bajo su cargo para solicitar más información al cliente.
-#### **ADMIN**
-*   **Gestión de Usuarios:** Es el único con poder para crear cuentas de tipo `AGENT` y manipular usuarios.
-*   **Asignación:** Puede asignar manualmente un ticket a un agente específico.
-*   **Control Total:** Puede cambiar la prioridad de cualquier ticket, editar metadatos o eliminar registros.
-## alcance
-Diseñé el sistema para una sola organización o herramienta interna
-para asegurar la calidad y robuztes del proyecto,
-pero la arquitectura está preparada para escalar
-añadiendo una entidad Organization y un discriminador en las consultas
-## Estados de los tickets
-Abierto
-en proceso
-cerrado
-reabierto
+## Pruebas y Validación
+
+El sistema incluye una suite de pruebas para validar la robustez de la lógica de negocio y las restricciones de seguridad:
+
+- `npm run test-db`: Valida la conexión y esquemas de base de datos.
+- `npm run test-auth`: Prueba el flujo de registro y autenticación JWT.
+- `npm run test-ticket`: Valida la creación y flujo básico de tickets.
+- `npm run test-violations`: Verifica que se respeten las restricciones de la máquina de estados y privacidad (ej: un cliente no puede ver tickets ajenos ni saltarse estados).
+
+## Auditoría
+Gracias a los `Subscribers` de TypeORM, cada cambio significativo en un ticket (estado, prioridad, asignación) genera automáticamente una entrada en la tabla `TicketHistory`, registrando qué usuario realizó el cambio y en qué fecha.
 

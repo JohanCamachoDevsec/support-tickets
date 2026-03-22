@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "test-db": "tsx tests/test-db.ts",
     "test-auth": "tsx tests/test-auth.ts",
-    "test-admin": "tsx tests/test-admin.ts"
+    "test-admin": "tsx tests/test-admin.ts",
+    "test-ticket": "tsx tests/test-ticket.ts",
+    "test-violations": "tsx tests/test-violations.ts"
   },
   "keywords": [],
   "author": "",
