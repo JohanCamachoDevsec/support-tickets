@@ -1,6 +1,7 @@
 import "dotenv/config";
 import "reflect-metadata";
 import express from "express";
+import cors from "cors";
 import { AppDataSource } from "./config/database.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -8,6 +9,12 @@ import ticketRoutes from "./routes/ticketRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Configuración de CORS
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 
 // Middleware para parsear JSON
 app.use(express.json());
