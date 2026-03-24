@@ -104,4 +104,6 @@ Gracias a los `Subscribers` de TypeORM, cada cambio significativo en un ticket (
 ## Deuda Técnica Conocida
 
 - **Patrón Repository:** Actualmente los servicios dependen directamente de `AppDataSource.getRepository()` de TypeORM → La solución planeada es crear interfaces `IRepository` que abstraigan el ORM, desacoplando la lógica de negocio de la persistencia.
-
+- **DTOs (Data Transfer Objects):**
+Actualmente los servicios retornan entidades de TypeORM directamente, lo que significa
+que la forma de la respuesta está acoplada al modelo de base de datos.
