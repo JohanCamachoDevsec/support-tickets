@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 
 export default function LoginPage() {
-  const { login, isLoggingIn, loginError } = useAuth();
+  const { login, isLoggingIn } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -40,20 +40,6 @@ export default function LoginPage() {
   };
 
   // Obtener mensaje de error genérico para el usuario
-  const getErrorMessage = () => {
-    if (!loginError) return null;
-
-    // El error real se registra en consola para debugging
-    console.error('Error de autenticación:', loginError);
-
-    // Mensaje amigable dependiendo del tipo de error
-    if (axios.isAxiosError(loginError) && loginError.response?.status === 401) {
-      return 'Correo o contraseña incorrectos';
-    }
-
-    return 'Ocurrió un error, intenta de nuevo';
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-950">
       <Card className="w-full max-w-md">

@@ -15,7 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TicketList } from '@/components/TicketList';
 import { CreateTicketForm } from '@/components/CreateTicketForm';
 import { UserManagement } from '@/components/UserManagement';
-import { Plus, LayoutDashboard, Users } from 'lucide-react';
+import { AuditLog } from '@/components/AuditLog';
+import { Plus, LayoutDashboard, Users, ShieldCheck } from 'lucide-react';
 import { UserRole } from '@/types/User';
 
 export default function DashboardPage() {
@@ -54,14 +55,17 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <Tabs defaultValue="tickets" className="space-y-6">
+      <Tabs defaultValue="tickets" className="flex flex-col space-y-6">
         {isAdmin && (
-          <TabsList className="grid w-full max-w-[400px] grid-cols-2">
+          <TabsList className="grid w-full max-w-[600px] grid-cols-3">
             <TabsTrigger value="tickets" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" /> Tickets
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" /> Usuarios
+            </TabsTrigger>
+            <TabsTrigger value="audit" className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4" /> Auditoría
             </TabsTrigger>
           </TabsList>
         )}
@@ -112,6 +116,19 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <UserManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+
+        {isAdmin && (
+          <TabsContent value="audit">
+            <Card>
+              <CardHeader>
+                <CardTitle>Auditoría del Sistema</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AuditLog />
               </CardContent>
             </Card>
           </TabsContent>
