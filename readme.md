@@ -1,4 +1,12 @@
-# Soporte de Tickets - Prueba Técnica Maja Sportswear 🎫
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-v20-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+
+# Soporte de Tickets - Prueba Técnica Maja Sportswear
+
+## Demo
+Ver aplicación en vivo(https://soportetickets.johandevsec.com)
 
 Este repositorio contiene la solución a la prueba técnica para el sistema de gestión de tickets de soporte. El objetivo es proporcionar una plataforma robusta que permita el manejo del ciclo de vida de incidencias, auditoría automática y control de acceso basado en roles (RBAC).
 
@@ -39,7 +47,7 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
 1. **OPEN**: Estado inicial al crear un ticket. Transición permitida a: `IN_PROGRESS`.
 2. **IN_PROGRESS**: El personal de soporte está trabajando. Transición permitida a: `CLOSED`.
 3. **CLOSED**: El problema ha sido resuelto. Transición permitida a: `REOPENED`.
-4. **REOPENED**: El cliente solicita reabrir el caso. Transición permitida a: `IN_PROGRESS` o `CLOSED`.
+4. **REOPENED**: El cliente solicita reabrir el caso. Transición permitida a: `IN_PROGRESS`.
 
 ### Seguridad y Roles (RBAC)
 - **CLIENT**: Puede crear tickets, comentarlos y reabrirlos (si están cerrados). Solo ve sus propios tickets.
@@ -61,7 +69,7 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
     ```
 
 2.  **Configurar variables de entorno:**
-    Copia el archivo de ejemplo y ajusta los valores (especialmente `JWT_SECRET` y credenciales de BD si se desea personalizarlas).
+    Copia el archivo de ejemplo `.env.example`, el cual contiene comentarios detallados sobre el propósito de cada variable, y ajusta los valores (especialmente `JWT_SECRET` y credenciales de BD si se desea personalizarlas).
     ```bash
     cp .env.example .env
     ```
@@ -92,4 +100,8 @@ El sistema incluye una suite de pruebas para validar la robustez de la lógica d
 
 ## Auditoría
 Gracias a los `Subscribers` de TypeORM, cada cambio significativo en un ticket (estado, prioridad, asignación) genera automáticamente una entrada en la tabla `TicketHistory`, registrando qué usuario realizó el cambio y en qué fecha.
+
+## Deuda Técnica Conocida
+
+- **Patrón Repository:** Actualmente los servicios dependen directamente de `AppDataSource.getRepository()` de TypeORM → La solución planeada es crear interfaces `IRepository` que abstraigan el ORM, desacoplando la lógica de negocio de la persistencia.
 
