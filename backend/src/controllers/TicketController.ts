@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import { ticketService } from "../services/TicketService.js";
 import { AppDataSource } from "../config/database.js";
-import { User } from "../entities/User.js";
+import { User, UserRole } from "../entities/User.js";
 import type { AuthRequest } from "../middlewares/AuthMiddleware.js";
 import {
   createTicketSchema,
@@ -106,7 +106,9 @@ export const assignTicket = async (req: AuthRequest, res: Response) => {
 
     const userRepository = AppDataSource.getRepository(User);
     const agent = await userRepository.findOneBy({ id: validatedData.agentId });
-    if (!agent) return res.status(404).json({ error: "Agente no encontrado" });
+    if (!agent || agent.role !== UserRole.AGENT) {
+      return res.status(400).json({ error: "Solo se puede asignar tickets a usuarios con rol AGENTE" });
+    }
 
     const ticket = await ticketService.assignTicket(Number(id), agent, admin);
     res.json(ticket);

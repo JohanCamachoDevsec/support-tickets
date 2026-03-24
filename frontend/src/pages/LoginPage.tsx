@@ -1,12 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginSchema, type LoginType } from '../types/Auth';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Button } from '../components/ui/button';
+import { LoginSchema, type LoginType } from '@/types/Auth';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 import axios from 'axios';
 
 export default function LoginPage() {
@@ -23,7 +24,17 @@ export default function LoginPage() {
   const onSubmit = (data: LoginType) => {
     login(data, {
       onSuccess: () => {
+        toast.success('¡Bienvenido!', {
+          description: 'Has iniciado sesión correctamente.',
+        });
         navigate('/dashboard');
+      },
+      onError: (error: any) => {
+        toast.error('Error de autenticación', {
+          description: axios.isAxiosError(error) && error.response?.status === 401
+            ? 'Correo o contraseña incorrectos'
+            : 'Ocurrió un error al intentar iniciar sesión.',
+        });
       }
     });
   };
@@ -54,11 +65,6 @@ export default function LoginPage() {
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
-            {loginError && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-500 dark:bg-red-900/20">
-                {getErrorMessage()}
-              </div>
-            )}
             <div className="space-y-2">
               <Label htmlFor="email">Correo Electrónico</Label>
               <Input
@@ -66,11 +72,11 @@ export default function LoginPage() {
                 type="email"
                 placeholder="nombre@ejemplo.com"
                 {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
+                className={errors.email ? 'border-destructive' : ''}
                 disabled={isLoggingIn}
               />
               {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
+                <p className="text-sm text-destructive">{errors.email.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -81,11 +87,11 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 {...register('password')}
-                className={errors.password ? 'border-red-500' : ''}
+                className={errors.password ? 'border-destructive' : ''}
                 disabled={isLoggingIn}
               />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
             </div>
           </CardContent>

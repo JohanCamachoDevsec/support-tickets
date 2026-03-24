@@ -43,7 +43,7 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
 
 ### Seguridad y Roles (RBAC)
 - **CLIENT**: Puede crear tickets, comentarlos y reabrirlos (si están cerrados). Solo ve sus propios tickets.
-- **AGENT**: Puede gestionar tickets asignados, cambiar estados y añadir comentarios internos.
+- **AGENT**: Puede gestionar tickets asignados, cambiar estados y añadir comentarios internos y edición de prioridades.
 - **ADMIN**: Control total del sistema, gestión de usuarios, asignación de tickets y edición de prioridades.
 
 ## Instalación y Despliegue

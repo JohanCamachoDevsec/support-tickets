@@ -19,3 +19,10 @@ export interface AuthResponse {
   user: User;
   token: string;
 }
+
+export interface CreateUserDTO {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}

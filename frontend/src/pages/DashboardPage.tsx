@@ -1,11 +1,30 @@
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTickets } from '@/hooks/useTickets';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TicketList } from '@/components/TicketList';
+import { CreateTicketForm } from '@/components/CreateTicketForm';
+import { UserManagement } from '@/components/UserManagement';
+import { Plus, LayoutDashboard, Users } from 'lucide-react';
+import { UserRole } from '@/types/User';
 
 export default function DashboardPage() {
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout, isLoading: authLoading } = useAuth();
+  const { useGetTickets } = useTickets();
+  const { data: tickets, isLoading: ticketsLoading } = useGetTickets();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Cargando perfil...</p>
@@ -13,42 +32,91 @@ export default function DashboardPage() {
     );
   }
 
+  const isAdmin = user?.role === UserRole.ADMIN;
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card className="mx-auto max-w-2xl">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl font-bold">Panel de Control</CardTitle>
-              <CardDescription>
-                Bienvenido al sistema de soporte de tickets
-              </CardDescription>
-            </div>
-            <Button variant="outline" onClick={() => logout()}>
-              Cerrar Sesión
-            </Button>
+      <header className="mb-8 flex items-center justify-between border-b pb-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
+          <p className="text-muted-foreground">
+            Hola, {user?.name}. {isAdmin ? 'Gestiona todo el sistema de soporte.' : 'Gestiona tus solicitudes de soporte.'}
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="hidden text-right sm:block">
+            <p className="text-sm font-medium">{user?.name}</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold text-primary">{user?.role}</p>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="rounded-lg border p-4">
-            <h3 className="mb-2 font-semibold">Información del Usuario</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <span className="text-muted-foreground">Nombre:</span>
-              <span>{user?.name}</span>
-              <span className="text-muted-foreground">Correo:</span>
-              <span>{user?.email}</span>
-              <span className="text-muted-foreground">Rol:</span>
-              <span className="capitalize">{user?.role?.toLowerCase()}</span>
-            </div>
-          </div>
+          <Button variant="outline" onClick={() => logout()}>
+            Cerrar Sesión
+          </Button>
+        </div>
+      </header>
 
-          <div className="rounded-lg bg-blue-50 p-6 text-center dark:bg-blue-900/20">
-            <p className="text-blue-600 dark:text-blue-400">
-              Próximamente: Gestión de tickets y seguimiento de solicitudes.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="tickets" className="space-y-6">
+        {isAdmin && (
+          <TabsList className="grid w-full max-w-[400px] grid-cols-2">
+            <TabsTrigger value="tickets" className="flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4" /> Tickets
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2">
+              <Users className="h-4 w-4" /> Usuarios
+            </TabsTrigger>
+          </TabsList>
+        )}
+
+        <TabsContent value="tickets" className="space-y-6">
+          {!isAdmin && user?.role !== UserRole.AGENT && (
+            <div className="flex justify-end">
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" /> Nuevo Ticket
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-xl">
+                  <DialogHeader>
+                    <DialogTitle>Crear Nuevo Ticket</DialogTitle>
+                    <DialogDescription>
+                      Describe tu problema y nos pondremos en contacto contigo lo antes posible.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4">
+                    <CreateTicketForm onSuccess={() => setIsDialogOpen(false)} />
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
+
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>{isAdmin ? 'Todos los Tickets del Sistema' : 'Listado de Tickets'}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {ticketsLoading ? (
+                <p className="text-center py-4 text-muted-foreground">Cargando tickets...</p>
+              ) : (
+                <TicketList tickets={tickets || []} />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {isAdmin && (
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Usuarios</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <UserManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+      </Tabs>
     </div>
   );
 }

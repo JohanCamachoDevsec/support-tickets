@@ -2,8 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
-import { useAuth } from './hooks/useAuth';
-import './App.css';
+import TicketDetailPage from './pages/TicketDetailPage';
+import { useAuth } from '@/hooks/useAuth';
+import { Toaster } from '@/components/ui/sonner';
 
 /**
  * Componente para proteger rutas privadas.
@@ -60,11 +61,17 @@ function App() {
             <DashboardPage />
           </ProtectedRoute>
         } />
+        <Route path="/tickets/:id" element={
+          <ProtectedRoute>
+            <TicketDetailPage />
+          </ProtectedRoute>
+        } />
         {/* Redirigir la raíz a dashboard si está logueado, sino a login */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         {/* Ruta para capturar cualquier otra y mandar a dashboard */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
+      <Toaster position="top-right" richColors />
     </Router>
   );
 }
