@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from "typeorm";
 import { IsNotEmpty, IsBoolean } from "class-validator";
-import { User } from "./User.js";
-import { Ticket } from "./Ticket.js";
+import type {Relation} from "typeorm";
+import type { User } from "./User.js";
+import type { Ticket } from "./Ticket.js";
 
 /**
  * Entidad que representa un comentario en un ticket.
@@ -20,11 +21,11 @@ export class TicketComment {
   @IsBoolean({ message: "El campo isInternal debe ser booleano" })
   isInternal!: boolean;
 
-  @ManyToOne(() => User, (user) => user.comments)
-  author!: User;
+  @ManyToOne("User", (user: any) => user.comments)
+  author!: Relation<User>;
 
-  @ManyToOne(() => Ticket, (ticket) => ticket.comments)
-  ticket!: Ticket;
+  @ManyToOne("Ticket", (ticket: any) => ticket.comments)
+  ticket!: Relation<Ticket>;
 
   @CreateDateColumn()
   createdAt!: Date;
