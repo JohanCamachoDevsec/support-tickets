@@ -3,6 +3,7 @@ import { Ticket, TicketStatus, TicketPriority } from "../entities/Ticket.js";
 import { TicketComment } from "../entities/TicketComment.js";
 import { User, UserRole } from "../entities/User.js";
 import type { Repository, FindManyOptions } from "typeorm";
+import { ForbiddenError, NotFoundError, BusinessRuleError } from "../errors/AppError.js";
 
 /**
  * Servicio encargado de gestionar la lógica de negocio de los Tickets.
@@ -67,7 +68,7 @@ export class TicketService {
 
     //  Validar propiedad para CLIENT
     if (user.role === UserRole.CLIENT && ticket.createdBy.id !== user.id) {
-      throw new Error("Acceso denegado: No tienes permisos para ver este ticket.");
+      throw new ForbiddenError("No tienes permisos para ver este ticket.");
     }
 
     // Filtrar comentarios internos si es CLIENT
@@ -93,25 +94,25 @@ export class TicketService {
     });
 
     if (!ticket) {
-      throw new Error(`Error: Ticket con ID ${ticketId} no encontrado.`);
+      throw new NotFoundError("Ticket");
     }
 
     //  Validaciones de rol para cambio de estado
     if (user.role === UserRole.CLIENT) {
       // Un cliente solo actúa sobre sus propios tickets
       if (ticket.createdBy.id !== user.id) {
-        throw new Error("Acceso denegado: No puedes modificar tickets de otros usuarios.");
+        throw new ForbiddenError("No puedes modificar tickets de otros usuarios.");
       }
 
       // Un cliente solo puede reabrir un ticket cerrado
       if (nextStatus !== TicketStatus.REOPENED) {
-        throw new Error("Acceso denegado: Los clientes solo pueden reabrir tickets.");
+        throw new BusinessRuleError("Los clientes solo pueden reabrir tickets.");
       }
     }
 
     // Los AGENTES y ADMINS pueden cambiar estados, pero validamos la máquina de estados.
     if (!this.isValidTransition(ticket.status, nextStatus)) {
-      throw new Error(`Transición de estado denegada: Intento ilegal de cambiar de ${ticket.status} a ${nextStatus}.`);
+      throw new BusinessRuleError(`Intento ilegal de cambiar de ${ticket.status} a ${nextStatus}.`, "INVALID_STATUS_TRANSITION");
     }
 
     // Aplicar cambio y metadatos de auditoría
@@ -127,10 +128,10 @@ export class TicketService {
    */
   async updatePriority(ticketId: number, newPriority: TicketPriority, user: User): Promise<Ticket> {
     const ticket = await this.repository.findOne({ where: { id: ticketId } });
-    if (!ticket) throw new Error("Ticket no encontrado");
+    if (!ticket) throw new NotFoundError("Ticket");
 
     if (user.role === UserRole.CLIENT) {
-      throw new Error("Acceso denegado: Los clientes no pueden cambiar la prioridad.");
+      throw new ForbiddenError("Los clientes no pueden cambiar la prioridad.");
     }
 
     ticket.priority = newPriority;
@@ -145,10 +146,10 @@ export class TicketService {
    */
   async assignTicket(ticketId: number, agent: User, admin: User): Promise<Ticket> {
     const ticket = await this.repository.findOne({ where: { id: ticketId } });
-    if (!ticket) throw new Error("Ticket no encontrado");
+    if (!ticket) throw new NotFoundError("Ticket");
 
     if (admin.role !== UserRole.ADMIN) {
-      throw new Error("Acceso denegado: Solo los administradores pueden asignar tickets.");
+      throw new ForbiddenError("Solo los administradores pueden asignar tickets.");
     }
 
     ticket.assignedTo = agent;
@@ -173,12 +174,12 @@ export class TicketService {
     });
 
     if (!ticket) {
-      throw new Error(`Error: Ticket con ID ${ticketId} no encontrado.`);
+      throw new NotFoundError("Ticket");
     }
 
     // Validar propiedad para CLIENT
     if (user.role === UserRole.CLIENT && ticket.createdBy.id !== user.id) {
-      throw new Error("Acceso denegado: No puedes comentar en tickets ajenos.");
+      throw new ForbiddenError("No puedes comentar en tickets ajenos.");
     }
 
     const commentRepository = AppDataSource.getRepository(TicketComment);

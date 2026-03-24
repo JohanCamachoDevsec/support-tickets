@@ -1,5 +1,6 @@
 import type {NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
+import { UnauthorizedError, ForbiddenError } from '../errors/AppError.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 
@@ -14,7 +15,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     const authHeader = req.headers.authorization;
 
     if(!authHeader|| !authHeader.startsWith("Bearer ")){
-        return res.status(401).json({error: "Token no proporcionado o inválido"});
+        throw new UnauthorizedError("Token no proporcionado o inválido");
     }
     const token = authHeader.split(' ')[1];
 
@@ -22,7 +23,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
         req.user = jwt.verify(token, JWT_SECRET) as { userId: number, email: string, role: string };
         next();
     }catch{
-        return res.status(401).json({error: "Token inválido"});
+        throw new UnauthorizedError("Token inválido");
     }
 };
 
@@ -33,11 +34,11 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
 export const authorize = (roles: string[]) => {
     return (req: AuthRequest, res: Response, next: NextFunction) => {
         if (!req.user) {
-            return res.status(401).json({ error: "No autenticado" });
+            throw new UnauthorizedError("No autenticado");
         }
 
         if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ error: "No tienes permisos para realizar esta acción" });
+            throw new ForbiddenError("No tienes permisos para realizar esta acción");
         }
 
         next();

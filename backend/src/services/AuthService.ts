@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AppDataSource } from '../config/database.js';
 import { User, UserRole } from '../entities/User.js';
+import { BusinessRuleError, UnauthorizedError, NotFoundError } from '../errors/AppError.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 
@@ -16,7 +17,7 @@ export async function register(body: any) {
 
   const existingUser = await userRepository.findOneBy({ email });
   if (existingUser) {
-    throw new Error('El email ya está registrado');
+    throw new BusinessRuleError('El email ya está registrado', 'EMAIL_ALREADY_EXISTS');
   }
 
   // Hasheo de contraseña
@@ -56,12 +57,12 @@ export async function login(email: string, password: string) {
     .getOne();
 
   if (!user) {
-    throw new Error('Credenciales inválidas');
+    throw new UnauthorizedError('Credenciales inválidas');
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    throw new Error('Credenciales inválidas');
+    throw new UnauthorizedError('Credenciales inválidas');
   }
 
   // Generar token JWT con payload enriquecido para roles
@@ -86,7 +87,7 @@ export async function getUserById(userId: number) {
   const userRepository = AppDataSource.getRepository(User);
   const user = await userRepository.findOneBy({ id: userId });
   if (!user) {
-    throw new Error('Usuario no encontrado');
+    throw new NotFoundError('Usuario');
   }
   return { id: user.id, name: user.name, email: user.email, role: user.role };
 }

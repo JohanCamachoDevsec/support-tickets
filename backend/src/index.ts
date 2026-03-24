@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
+import { errorHandler } from "./middlewares/ErrorHandler.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,9 @@ app.use("/api/audit", auditRoutes);
 app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
+
+// Middleware de manejo de errores centralizado
+app.use(errorHandler);
 
 // Inicialización de la base de datos y arranque del servidor
 console.log("DEBUG - Variables de DB:", {
