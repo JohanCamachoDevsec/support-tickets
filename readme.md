@@ -3,10 +3,10 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
-# Soporte de Tickets - Prueba Técnica Maja Sportswear
+# Soporte de Tickets
 
 ## Demo
-Ver aplicación en vivo(https://soportetickets.johandevsec.com)
+Ver aplicación en vivo(https://supportickets.johandevsec.com)
 
 Este repositorio contiene la solución a la prueba técnica para el sistema de gestión de tickets de soporte. El objetivo es proporcionar una plataforma robusta que permita el manejo del ciclo de vida de incidencias, auditoría automática y control de acceso basado en roles (RBAC).
 
