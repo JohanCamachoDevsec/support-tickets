@@ -50,9 +50,36 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
 
 ### Requisitos Previos
 - Docker y Docker Compose instalados.
-- Node.js (v18 o superior).
+- Node.js (v20 o superior) - Solo si se desea desarrollo local.
 
-### Pasos para levantar el entorno:
+### Pasos para levantar el entorno con Docker:
+
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [url-del-repo]
+    cd support-tickets
+    ```
+
+2.  **Configurar variables de entorno:**
+    Copia el archivo de ejemplo y ajusta los valores (especialmente `JWT_SECRET` y credenciales de BD si se desea personalizarlas).
+    ```bash
+    cp .env.example .env
+    ```
+
+3.  **Construir y levantar contenedores:**
+    ```bash
+    docker compose up --build
+    ```
+
+4.  **Acceder a la aplicación:**
+    La aplicación estará disponible en `http://localhost`. El proxy de Nginx se encargará de redirigir el tráfico al frontend y las peticiones `/api` al backend.
+
+### Desarrollo Local (sin Docker)
+
+Si prefieres trabajar fuera de contenedores:
+1.  **Backend:** `cd backend && npm install && npm run dev`
+2.  **Frontend:** `cd frontend && npm install && npm run dev`
+*(Nota: Requiere una instancia de PostgreSQL corriendo localmente).*
 
 ## Pruebas y Validación
 

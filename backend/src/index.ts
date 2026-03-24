@@ -11,9 +11,13 @@ import auditRoutes from "./routes/auditRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Confiar en el proxy inverso (Nginx)
+app.set("trust proxy", 1);
+
 // Configuración de CORS
+// Se permite cualquier origen para que funcione con cualquier IP/dominio (según requerimiento)
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: true,
   credentials: true
 }));
 
