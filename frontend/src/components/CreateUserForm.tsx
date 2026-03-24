@@ -19,8 +19,8 @@ const userSchema = z.object({
   name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
   email: z.string().email('Formato de email inválido'),
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
-  role: z.nativeEnum(UserRole, {
-    errorMap: () => ({ message: "Rol no válido" }),
+  role: z.enum(UserRole, {
+    error: "Rol no válido"
   }),
 });
 

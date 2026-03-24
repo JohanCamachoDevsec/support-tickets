@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { IsEmail, IsEnum, IsNotEmpty, MinLength } from "class-validator";
+import type {Relation} from "typeorm";
 import { Ticket } from "./Ticket.js";
-import { TicketComment } from "./TicketComment.js";
-import { TicketHistory } from "./TicketHistory.js";
-
+import type { TicketComment } from "./TicketComment.js";
+import type { TicketHistory } from "./TicketHistory.js";
 /**
  * roles posibles en el sistema.
  */
@@ -49,11 +49,11 @@ export class User {
   @OneToMany(() => Ticket, (ticket) => ticket.assignedTo)
   assignedTickets!: Ticket[];
 
-  @OneToMany(() => TicketComment, (comment) => comment.author)
-  comments!: TicketComment[];
+  @OneToMany("TicketComment", (comment: any) => comment.author)
+  comments!: Relation<TicketComment[]>;
 
-  @OneToMany(() => TicketHistory, (history) => history.changedBy)
-  historyActions!: TicketHistory[];
+  @OneToMany("TicketHistory", (history: any) => history.changedBy)
+  historyActions!: Relation<TicketHistory[]>;
 
   @CreateDateColumn()
   createdAt!: Date;
