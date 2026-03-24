@@ -64,7 +64,7 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [url-del-repo]
+    git clone [https://github.com/JohanCamachoDevsec/support-tickets]
     cd support-tickets
     ```
 
