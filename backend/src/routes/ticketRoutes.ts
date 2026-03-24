@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as ticketController from "../controllers/TicketController.js";
+import { ticketHistoryController } from "../controllers/TicketHistoryController.js";
 import { authenticate, authorize } from "../middlewares/AuthMiddleware.js";
 import { UserRole } from "../entities/User.js";
 
@@ -16,6 +17,7 @@ router.use(authenticate);
 router.get("/", ticketController.getTickets);
 router.post("/", ticketController.createTicket);
 router.get("/:id", ticketController.getTicket);
+router.get("/:id/history", ticketHistoryController.getTicketHistory);
 
 /**
  * Acciones sobre el ticket.

@@ -5,9 +5,9 @@ Este repositorio contiene la solución a la prueba técnica para el sistema de g
 ## Stack Tecnológico
 
 - **Backend:** Node.js, Express (v5.x), TypeScript, TypeORM.
-- **Frontend:** React con TypeScript.
+- **Frontend:** React 18 (Vite), TypeScript, Tailwind CSS, Shadcn/UI, TanStack Query.
 - **Base de Datos:** PostgreSQL 17.
-- **Seguridad/Validación:** JWT, BcryptJS, Zod, class-validator.
+- **Seguridad/Validación:** JWT, Zod, React Hook Form.
 - **Infraestructura:** Docker y Docker Compose.
 
 ## Estructura del Proyecto
@@ -25,7 +25,12 @@ El proyecto se divide en dos directorios principales para separar la lógica del
 - `src/config`: Configuración de base de datos y entorno.
 
 ### Frontend (`/frontend`)
-- Estructura estándar de React con TypeScript para la interfaz de gestión.
+- `src/components`: Biblioteca de componentes atómicos y compuestos (basados en Radix UI).
+- `src/hooks`: Gestión de peticiones asíncronas y caché mediante TanStack Query.
+- `src/lib`: Cliente Axios configurado con interceptores para inyección automática del JWT.
+- `src/pages`: Enrutamiento y vistas de la aplicación (Login, Lista de Tickets, Detalle).
+- `src/services`: Definiciones de endpoints y transformación de datos.
+- `src/types`: Definiciones de tipos compartidas que reflejan los modelos del backend.
 
 ## Máquina de Estados (Ciclo de Vida)
 
@@ -38,7 +43,7 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
 
 ### Seguridad y Roles (RBAC)
 - **CLIENT**: Puede crear tickets, comentarlos y reabrirlos (si están cerrados). Solo ve sus propios tickets.
-- **AGENT**: Puede gestionar tickets asignados, cambiar estados y añadir comentarios internos.
+- **AGENT**: Puede gestionar tickets asignados, cambiar estados y añadir comentarios internos y edición de prioridades.
 - **ADMIN**: Control total del sistema, gestión de usuarios, asignación de tickets y edición de prioridades.
 
 ## Instalación y Despliegue
