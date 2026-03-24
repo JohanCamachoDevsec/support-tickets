@@ -1,11 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from "typeorm";
-import { User } from "./User.js";
-import { Ticket } from "./Ticket.js";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, type Relation } from "typeorm";
+import type { User } from "./User.js";
+import type { Ticket } from "./Ticket.js";
 
-/**
- * Entidad que rastrea los cambios de estado en un ticket.
- * Permite mantener un historial de auditoría de todas las transiciones.
- */
+
 @Entity()
 export class TicketHistory {
   @PrimaryGeneratedColumn()
@@ -20,11 +17,11 @@ export class TicketHistory {
   @Column({ type: "varchar", nullable: true })
   newValue!: string;
 
-  @ManyToOne(() => User, (user) => user.historyActions)
-  changedBy!: User;
+  @ManyToOne("User", (user: any) => user.historyActions)  // 👈 string
+  changedBy!: Relation<User>;  // 👈 Relation<>
 
-  @ManyToOne(() => Ticket, (ticket) => ticket.history)
-  ticket!: Ticket;
+  @ManyToOne("Ticket", (ticket: any) => ticket.history)   // 👈 string
+  ticket!: Relation<Ticket>;   // 👈 Relation<>
 
   @CreateDateColumn()
   createdAt!: Date;

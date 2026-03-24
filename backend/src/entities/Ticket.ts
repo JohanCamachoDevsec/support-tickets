@@ -1,9 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import {
+  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany,
+  type Relation
+} from "typeorm";
 import { IsEnum, IsNotEmpty } from "class-validator";
-import { User } from "./User.js";
-import { TicketComment } from "./TicketComment.js";
-import { TicketHistory } from "./TicketHistory.js";
-
+import type { User } from "./User.js";
+import type { TicketComment } from "./TicketComment.js";
+import type { TicketHistory } from "./TicketHistory.js";
 /**
  * Estados posibles.
  */
@@ -56,17 +58,17 @@ export class Ticket {
   @IsEnum(TicketPriority, { message: "Prioridad no válida" })
   priority!: TicketPriority;
 
-  @ManyToOne(() => User, (user) => user.createdTickets)
-  createdBy!: User;
+  @ManyToOne("User", (user: any) => user.createdTickets)
+  createdBy!: Relation<User>;        // 👈
 
-  @ManyToOne(() => User, (user) => user.assignedTickets, { nullable: true })
-  assignedTo!: User | null;
+  @ManyToOne("User", (user: any) => user.assignedTickets, { nullable: true })
+  assignedTo!: Relation<User> | null; // 👈
 
-  @OneToMany(() => TicketComment, (comment) => comment.ticket)
-  comments!: TicketComment[];
+  @OneToMany("TicketComment", (comment: any) => comment.ticket)
+  comments!: Relation<TicketComment[]>; // 👈
 
-  @OneToMany(() => TicketHistory, (history) => history.ticket)
-  history!: TicketHistory[];
+  @OneToMany("TicketHistory", (history: any) => history.ticket)
+  history!: Relation<TicketHistory[]>;  // 👈
 
   @CreateDateColumn()
   createdAt!: Date;
