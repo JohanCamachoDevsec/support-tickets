@@ -54,9 +54,59 @@ El sistema implementa un grafo de estados determinista para garantizar la integr
 
 ### Pasos para levantar el entorno:
 
+1. **Clonar el repositorio:**
+   ```bash
+   git clone <url-del-repositorio>
+   cd support-tickets
+   ```
+
+2. **Configurar las variables de entorno:**
+   - En la raíz del proyecto, crear un archivo `.env` para la base de datos:
+     ```env
+     DB_PORT=5432
+     DB_USER=postgres
+     DB_PASSWORD=postgres
+     DB_NAME=support_tickets
+     ```
+   - En la carpeta `/backend`, crear un archivo `.env`:
+     ```env
+     PORT=3000
+     DB_HOST=localhost
+     DB_PORT=5432
+     DB_USER=postgres
+     DB_PASSWORD=postgres
+     DB_NAME=support_tickets
+     NODE_ENV=development
+     JWT_SECRET=tu_secreto_jwt_aqui
+     ```
+   - En la carpeta `/frontend`, crear un archivo `.env`:
+     ```env
+     VITE_API_URL=http://localhost:3000/api
+     ```
+
+3. **Levantar la base de datos:**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Instalar y ejecutar el Backend:**
+   ```bash
+   cd backend
+   npm install
+   npm run dev
+   ```
+
+5. **Instalar y ejecutar el Frontend:**
+   Abre una nueva terminal y ejecuta:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
 ## Pruebas y Validación
 
-El sistema incluye una suite de pruebas para validar la robustez de la lógica de negocio y las restricciones de seguridad:
+El sistema incluye una suite de pruebas para validar la robustez de la lógica de negocio y las restricciones de seguridad. Para ejecutarlas, navega a la carpeta `/backend` y utiliza los siguientes comandos:
 
 - `npm run test-db`: Valida la conexión y esquemas de base de datos.
 - `npm run test-auth`: Prueba el flujo de registro y autenticación JWT.
